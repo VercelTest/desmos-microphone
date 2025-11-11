@@ -1,0 +1,32 @@
+/* Container for the output */
+.output {
+  background: black;
+  color: white;
+  border-radius: 6px;
+  width: 50vw;
+  max-height: 80vh;
+  padding: 12px 8px;
+  overflow-y: auto;
+  overflow-x: auto; 
+  counter-reset: line;
+  white-space: pre;
+  text-align: left;
+  font-family: monospace;
+}
+
+/* Each line */
+.output span {
+  display: block;
+  counter-increment: line;
+  position: relative;
+  padding-left: 2em;
+}
+
+/* Line numbers */
+.output span::before {
+  content: counter(line);
+  position: absolute;
+  left: 0;
+  color: grey;
+  user-select: none;
+}

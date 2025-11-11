@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Desmos</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header><h1>Desmos Microphone</h1></header>
+    <p>
+      Input an mp3 file and click 'Submit'. Wait for the generator to load and
+      then input the function into desmos. This will only play 10 seconds due to
+      the massive function size of the audio.
+    </p>
+
+    <form id="audioForm">
+      <input type="file" id="audioFile" accept="audio/*" required/>
+      <input type="submit" />
+    </form>
+
+    <progress id="progressBar" value="0" max="100" style="width:300px;"></progress>
+
+    <h3>Output:</h3>
+    <button id="copyBtn">Copy Output</button>
+    <div id="output" class="output">It will come out here</div>
+
+    <script src="/javascript/main.js"></script>
+    <script src="/javascript/formatoutput.js"></script>
+  </body>
+</html>
