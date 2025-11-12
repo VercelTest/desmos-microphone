@@ -7,7 +7,7 @@ async function processAudio() {
   const file = getAudioFile();
   if (!file) return;
 
-  const cutBuffer = await cutToSeconds(file, 10);
+  const cutBuffer = await cutToSeconds(file, 5);
   const sampleRate = cutBuffer.sampleRate;
 
   let channelData = getMonoChannel(cutBuffer);
@@ -23,17 +23,15 @@ async function processAudio() {
     channelData[i] /= maxVal;
   }
 
-  // Setup progress bar
   const progressBar = document.getElementById("progressBar");
+  const tickerRate = document.getElementById("tickerRate");
   progressBar.value = 0;
 
   // Create worker
-  const worker = new Worker("javascript/webworker.js");
+  const worker = new Worker("javascript/converter.js");
   worker.postMessage({
     channelData,
     sampleRate,
-    stepMs: 5,
-    maxPeaks: 5,
   });
 
   worker.onmessage = (e) => {
@@ -41,11 +39,11 @@ async function processAudio() {
       progressBar.value = e.data.percent;
     } else if (e.data.type === "result") {
       const intervals = e.data.intervals;
-
-      // Generate the Desmos output
       generateDesmosOutput(intervals);
-
       progressBar.value = 100;
+
+    } else if (e.data.type == "ticker" ) {
+      tickerRate.textContent = "Set the ticker rate to " + Math.round(e.data.tickerRate) + "ms for playback";
     }
   };
 }
@@ -99,17 +97,27 @@ function getMonoChannel(audioBuffer) {
 
 function generateDesmosOutput(intervals) {
     const outputDiv = document.getElementById('output');
+    const peaks = intervals[0].length;
+    let freqoutput = [];
+    let voloutput = [];
 
-    intervals.forEach((interval, intervalIdx) => {
-      let freqtable = [];
-      interval.forEach(([freq, volume]) => {
-          
+    for (let i = 0; i < peaks; i++) {
+      let frequencies = [];
+      let volumes = [];
+      intervals.forEach((interval, intervalIdx) => {
+        frequencies.push(Math.round(interval[i][0]*100)/100);
+        volumes.push(Math.round(interval[i][1]*100)/100);
       });
-    });
+      freqoutput.push("[" + frequencies.toString() + "][i]");
+      voloutput.push("[" + volumes.toString() + "][i]");
+    }
+    freqoutput = "F(i) = [" + freqoutput.toString() + "]"
+    voloutput = "G(i) = [" + voloutput.toString() + "]"
 
-    // outputDiv.dataset.raw = rawText;
+    let rawText = voloutput + "\n" + freqoutput;
 
-    // const lines = rawText.split('\n');
+    outputDiv.dataset.raw = rawText;
+    const lines = rawText.split('\n');
     outputDiv.innerHTML = lines.map(line => `<span>${line || '&nbsp;'}</span>`).join('');
 }
 
