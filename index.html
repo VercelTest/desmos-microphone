@@ -8,27 +8,52 @@
   </head>
   <body>
     <header><h1>Desmos Microphone</h1></header>
-    <p>
-      Input an mp3 file and click 'Submit'. Wait for the generator to load and
-      then input the function into desmos. This will only play 10 seconds due to
-      the massive function size of the audio.
-    </p>
 
-    <form id="audioForm">
-      <input type="file" id="audioFile" accept="audio/*" required/>
-      <input type="submit" />
-    </form>
+    <div class="inputContainer">
+      <h3>Input</h3>
 
-    <progress id="progressBar" value="0" max="100" style="width:300px;"></progress>
+      <div class="choice-container">
+        <p>Do you have access to Inspect Element on your browser?</p>
+        <input type="radio" id="option1" name="choice" value="value1" />
+        <label for="Yes">Yes</label>
 
-    <h3>Output:</h3>
-    <p id="tickerRate"></p>
+        <input type="radio" id="option2" name="choice" value="value2" checked />
+        <label for="No">No</label>
+      </div>
 
-    <button id="copyBtn">Copy Output</button>
-    <div id="output" class="output">It will come out here...</div>
+      <form id="audioForm">
+        <input type="file" id="audioFile" accept="audio/*" required />
+
+        <p>Or...</p>
+
+        <div id="recorder">
+          <button id="recordBtn">Record 5s</button>
+
+          <div id="progressContainer" style="display: none">
+            <progress id="recordProgress" value="0" max="5"></progress>
+            <span id="timeLeft">5s</span>
+          </div>
+        </div>
+
+        <input type="submit" />
+      </form>
+    </div>
+
+    <div id="outputContainer" class="outputContainer" style="display: none">
+
+      <p id="outputInstructions">
+      </p>
+
+      <h3>Output</h3>
+      <progress id="outputProgress" value="0" max="100"></progress>
+
+      <button id="copyBtn" style="display: block;">Copy Output</button>
+      <div id="output" class="output">It will come out here...</div>
+    </div>
+
     <footer></footer>
-
     <script src="/javascript/main.js"></script>
+    <script src="/javascript/recordmic.js"></script>
     <script src="/javascript/formatoutput.js"></script>
   </body>
 </html>

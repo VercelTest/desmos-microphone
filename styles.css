@@ -30,3 +30,13 @@
   color: grey;
   user-select: none;
 }
+
+.outputContainer {
+  padding: 20px;
+  border: 2px solid black;
+}
+
+.inputContainer {
+  padding: 20px;
+  border: 2px solid black;
+}

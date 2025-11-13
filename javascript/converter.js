@@ -2,19 +2,17 @@ importScripts('/javascript/fft.js');
 
 // === QUALITY SETTINGS ===
 const FFT_SIZE = 16384; // Tradeoff clearer frequency vs time resolution: Try find a balance         
-const STEP_RATIO = 0.05; // this will give you smoother transitions between samples but will DESTROY your pc if you set this lower than 0.05. Setting this to 1 will turn the smoothing off
-const MAX_PEAKS = 10;    // max amount of peaks to keep per sample
-const MIN_MAGNITUDE = 0.01; // threshold to ignore quiet harmonics     
-const MAX_FREQUENCY = 16000; // old people cant hear higher than 15000Hz btw  
+const STEP_RATIO = 0.05; // smoothing rate
+const MIN_MAGNITUDE = 0.006; // threshold to ignore quiet harmonics     
+const MAX_FREQUENCY = 16000; // highest frequency in hz to consider
 const PROGRESS_INTERVAL = 5; // how often to send progress updates to the green bar
 
-// === NEW: Simpler, more robust settings ===
-const MIN_FREQUENCY = 20;
-const SILENCE_THRESHOLD = 0.005;
+const MIN_FREQUENCY = 24;
+const SILENCE_THRESHOLD = 0.004;
 
 // === WORKER ===
 onmessage = function(e) {
-  const { channelData, sampleRate } = e.data;
+  const { channelData, sampleRate, MAX_PEAKS } = e.data;
   const stepSize = Math.floor(FFT_SIZE * STEP_RATIO);
   const fft = new FFTJS(FFT_SIZE);
   const intervals = [];

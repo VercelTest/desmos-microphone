@@ -1,13 +1,28 @@
-document.getElementById("audioForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  processAudio();
+// detect devmode
+let devmode = false;
+
+document.querySelectorAll('input[name="choice"]').forEach((radio) => {
+  radio.addEventListener('change', (e) => {
+    devmode = (e.target.value == "value1");
+  });
 });
 
 async function processAudio() {
+  const progressBar = document.getElementById("outputProgress");
+  progressBar.value = 0;
+
   const file = getAudioFile();
   if (!file) return;
 
-  const cutBuffer = await cutToSeconds(file, 5);
+  document.getElementById("outputContainer").style.display = "block"
+
+  let cutBuffer
+  if (devmode) {
+    cutBuffer = await cutToSeconds(file, 15);
+  } else {
+    cutBuffer = await cutToSeconds(file, 5);
+  }
+
   const sampleRate = cutBuffer.sampleRate;
 
   let channelData = getMonoChannel(cutBuffer);
@@ -23,15 +38,14 @@ async function processAudio() {
     channelData[i] /= maxVal;
   }
 
-  const progressBar = document.getElementById("progressBar");
-  const tickerRate = document.getElementById("tickerRate");
-  progressBar.value = 0;
+  let MAX_PEAKS = (devmode)? 610 : 35
 
   // Create worker
   const worker = new Worker("javascript/converter.js");
   worker.postMessage({
     channelData,
     sampleRate,
+    MAX_PEAKS,
   });
 
   worker.onmessage = (e) => {
@@ -39,11 +53,12 @@ async function processAudio() {
       progressBar.value = e.data.percent;
     } else if (e.data.type === "result") {
       const intervals = e.data.intervals;
-      generateDesmosOutput(intervals);
+      let [vol, freq] = generateFunctionOutput(intervals);
+      setHTMLOutput(vol, freq)
       progressBar.value = 100;
 
-    } else if (e.data.type == "ticker" ) {
-      tickerRate.textContent = "Set the ticker rate to " + Math.round(e.data.tickerRate) + "ms for playback";
+    } else if (e.data.type === "ticker") {
+      console.log(e.data.tickerRate)
     }
   };
 }
@@ -95,8 +110,26 @@ function getMonoChannel(audioBuffer) {
   return monoData;
 }
 
-function generateDesmosOutput(intervals) {
-    const outputDiv = document.getElementById('output');
+function setHTMLOutput(voloutput, freqoutput) {
+  const outputDiv = document.getElementById('output');
+  let rawText = "";
+  if (devmode) {
+    const outputJSON = {"version":11,"graph":{"viewport":{"xmin":-10,"ymin":-10,"xmax":10,"ymax":10}},"expressions":{"list":[{"type":"folder","id":"134","title":"Logic","collapsed":true},{"type":"expression","id":"4","folderId":"134","color":"#c74440","latex":"\\operatorname{tone}\\left(F\\left(t\\right),\\ G\\left(t\\right)\\right)"},{"type":"expression","id":"3","folderId":"134","color":"#388c46","latex":"t=35","hidden":true,"slider":{"hardMin":true,"loopMode":"LOOP_FORWARD","min":"0","max":"295","step":"1"}},{"type":"text","id":"131","text":"Reset button (press the arrow)"},{"type":"expression","id":"14","color":"#c74440","latex":"R_{eset}=t\\to0"},{"type":"folder","id":"146","title":"Audio Data (DO NOT OPEN THIS WILL CRASH YOUR BROWSER)","hidden":true,"collapsed":true},{"type":"expression","id":"147","folderId":"146","color":"#2d70b3","latex":freqoutput,"hidden":true},{"type":"expression","id":"148","folderId":"146","color":"#388c46","latex":voloutput,"hidden":true}],"ticker":{"handlerLatex":"t\\to t+1","minStepLatex":"17","open":true}}}
+
+    rawText = `calculator = Calc || Desmos.instance || Object.values(Desmos)[0];\ncalculator.setState(${JSON.stringify(outputJSON)});`
+     document.getElementById("outputInstructions").innerHTML = "Instructions:<br />Open a new graph in Desmos<br />Open Inspect by Right clicking and selecting 'Inspect Element' or pressing Cmd/Ctrl + Shift + C<br />Paste the line below into console and close the Inspect";
+  } else {
+    rawText = voloutput + "\n" + freqoutput;
+
+    document.getElementById("outputInstructions").innerHTML = 'Instructions:<br />Go to this link: <a href="https://www.desmos.com/calculator/fbtugwsq9q" target="_blank">Desmos Audio Player</a><br />Wait for the generator to load and then input the function into desmos. This will only play 5 seconds of your audio and is very limited quality due to the massive function size of the audio.';
+  }
+
+  outputDiv.dataset.raw = rawText;
+  const lines = rawText.split('\n');
+  outputDiv.innerHTML = lines.map(line => `<span>${line || '&nbsp;'}</span>`).join('');
+}
+
+function generateFunctionOutput(intervals) {
     const peaks = intervals[0].length;
     let freqoutput = [];
     let voloutput = [];
@@ -105,7 +138,7 @@ function generateDesmosOutput(intervals) {
       let frequencies = [];
       let volumes = [];
       intervals.forEach((interval, intervalIdx) => {
-        frequencies.push(Math.round(interval[i][0]*100)/100);
+        frequencies.push(Math.round(interval[i][0]));
         volumes.push(Math.round(interval[i][1]*100)/100);
       });
       freqoutput.push("[" + frequencies.toString() + "][i]");
@@ -114,19 +147,26 @@ function generateDesmosOutput(intervals) {
     freqoutput = "F(i) = [" + freqoutput.toString() + "]"
     voloutput = "G(i) = [" + voloutput.toString() + "]"
 
-    let rawText = voloutput + "\n" + freqoutput;
-
-    outputDiv.dataset.raw = rawText;
-    const lines = rawText.split('\n');
-    outputDiv.innerHTML = lines.map(line => `<span>${line || '&nbsp;'}</span>`).join('');
+    return [voloutput, freqoutput];
 }
 
 // Copy button
 document.getElementById("copyBtn").addEventListener("click", () => {
     const outputDiv = document.getElementById("output");
-    const text = outputDiv.dataset.raw; // ONLY use raw text for copying
+    const text = outputDiv.dataset.raw;
 
     navigator.clipboard.writeText(text)
         .then(() => alert("Output copied to clipboard!"))
         .catch(err => console.error("Failed to copy: ", err));
+});
+
+// Submit audio button
+document.getElementById("audioForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  processAudio();
+});
+
+// remove progress bar when new file loaded
+document.getElementById("audioFile").addEventListener('change', function () {
+  document.getElementById("outputProgress").value = 0;
 });
