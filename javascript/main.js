@@ -18,9 +18,9 @@ async function processAudio() {
 
   let cutBuffer
   if (devmode) {
-    cutBuffer = await cutToSeconds(file, 25);
+    cutBuffer = await cutToSeconds(file, 25, 22050);
   } else {
-    cutBuffer = await cutToSeconds(file, 5);
+    cutBuffer = await cutToSeconds(file, 5, 22050);
   }
 
   const sampleRate = cutBuffer.sampleRate;
@@ -38,7 +38,7 @@ async function processAudio() {
     channelData[i] /= maxVal;
   }
 
-  let MAX_PEAKS = (devmode)? 450 : 10
+  let MAX_PEAKS = (devmode)? 150 : 10
 
   // Create worker
   const worker = new Worker("javascript/converter.js");
@@ -73,14 +73,14 @@ function getAudioFile() {
   return fileInput.files[0];
 }
 
-async function cutToSeconds(file, maxSeconds) {
+async function cutToSeconds(file, maxSeconds, sampleRate) {
   const arrayBuffer = await file.arrayBuffer();
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
   const duration = Math.min(audioBuffer.duration, maxSeconds);
   const numberOfChannels = audioBuffer.numberOfChannels;
-  const targetSampleRate = 12000;
+  const targetSampleRate = sampleRate;
 
   const cutBuffer = audioContext.createBuffer(
     numberOfChannels,
@@ -125,7 +125,7 @@ function setHTMLOutput(voloutput, freqoutput, totalFrames) {
   const outputDiv = document.getElementById('output');
   let rawText = "";
   if (devmode) {
-    const outputJSON = {"version":11,"graph":{"viewport":{"xmin":-10,"ymin":-10,"xmax":10,"ymax":10}},"expressions":{"list":[{"type":"folder","id":"134","title":"Logic","collapsed":true},{"type":"expression","id":"4","folderId":"134","color":"#c74440","latex":"\\operatorname{tone}\\left(F\\left(t\\right),\\ G\\left(t\\right)\\right)"},{"type":"expression","id":"3","folderId":"134","color":"#388c46","latex":"t=0","hidden":true,"slider":{"hardMin":true,"loopMode":"LOOP_FORWARD","min":"0","max":"295","step":"1"}},{"type":"text","id":"131","text":"Reset button (press the arrow)"},{"type":"expression","id":"14","color":"#c74440","latex":"R_{eset}=t\\to0"},{"type":"folder","id":"146","title":"Audio Data (DO NOT OPEN THIS WILL CRASH YOUR BROWSER)","hidden":true,"collapsed":true},{"type":"expression","id":"147","folderId":"146","color":"#2d70b3","latex":freqoutput,"hidden":true},{"type":"expression","id":"148","folderId":"146","color":"#388c46","latex":voloutput,"hidden":true}],"ticker":{"handlerLatex": "t\\to t+1\\left\\{t<" + (totalFrames +1) + "\\right\\}","minStepLatex":"34","open":true}}}
+    const outputJSON = {"version":11,"graph":{"viewport":{"xmin":-10,"ymin":-10,"xmax":10,"ymax":10}},"expressions":{"list":[{"type":"folder","id":"134","title":"Logic","collapsed":true},{"type":"expression","id":"4","folderId":"134","color":"#c74440","latex":"\\operatorname{tone}\\left(F\\left(t\\right),\\ G\\left(t\\right)\\right)"},{"type":"expression","id":"3","folderId":"134","color":"#388c46","latex":"t=0","hidden":true,"slider":{"hardMin":true,"loopMode":"LOOP_FORWARD","min":"0","max":"295","step":"1"}},{"type":"text","id":"131","text":"Reset button (press the arrow)"},{"type":"expression","id":"14","color":"#c74440","latex":"R_{eset}=t\\to0"},{"type":"folder","id":"146","title":"Audio Data (DO NOT OPEN THIS WILL CRASH YOUR BROWSER)","hidden":true,"collapsed":true},{"type":"expression","id":"147","folderId":"146","color":"#2d70b3","latex":freqoutput,"hidden":true},{"type":"expression","id":"148","folderId":"146","color":"#388c46","latex":voloutput,"hidden":true}],"ticker":{"handlerLatex": "t\\to t+1\\left\\{t<" + (totalFrames +1) + "\\right\\}","minStepLatex":"0","open":true}}}
 
     rawText = `calculator = Calc || Desmos.instance || Object.values(Desmos)[0];\ncalculator.setState(${JSON.stringify(outputJSON)});`
      document.getElementById("outputInstructions").innerHTML = "Instructions:<br />Open a new graph in Desmos<br />Open Inspect by Right clicking and selecting 'Inspect Element' or pressing Cmd/Ctrl + Shift + C<br />Paste the line below into console and close the Inspect";
@@ -150,7 +150,7 @@ function generateFunctionOutput(intervals) {
       let volumes = [];
       intervals.forEach((interval, intervalIdx) => {
         frequencies.push(Math.round(interval[i][0]));
-        volumes.push(Math.round(interval[i][1]*100)/100);
+        volumes.push(Math.round(interval[i][1]*1000)/1000);
       });
       freqoutput.push("[" + frequencies.toString() + "][i]");
       voloutput.push("[" + volumes.toString() + "][i]");

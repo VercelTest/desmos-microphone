@@ -4,7 +4,7 @@ importScripts('/javascript/fft.js');
 
 // === QUALITY SETTINGS
 const FFT_SIZE = 2048;           // Increased for better frequency resolution
-const STEP_SIZE = 408;          // smoother sound- but desmos will sund slowe
+const STEP_SIZE = 375;          // smoother sound- but desmos will sund slowe
 const MIN_MAGNITUDE = 0.006;     // Threshold
 const MAX_FREQUENCY = 16000;     // Highest frequency in Hz to consider
 const MIN_FREQUENCY = 30;        // Lowest frequency to consider
