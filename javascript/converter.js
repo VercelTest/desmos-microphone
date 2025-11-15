@@ -1,6 +1,6 @@
 importScripts('/javascript/fft.js');
 
-// THANK YOU QINGY1337
+// THANK YOU QINGY1337 FOR FEQUENCY SORT
 
 // === QUALITY SETTINGS
 const FFT_SIZE = 2048;           // Increased for better frequency resolution
@@ -107,8 +107,7 @@ onmessage = function(e) {
   }
 
   postMessage({ type: 'progress', percent: 100 });
-  postMessage({ type: 'result', intervals });
-  postMessage({ type: 'ticker', tickerRate: (STEP_SIZE / sampleRate) * 1000 });
+  postMessage({ type: 'result', intervals, tickerRate: (STEP_SIZE / sampleRate) * 1000  });
 };
 
 // Peak detection with minimum distance
