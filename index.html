@@ -4,27 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Desmos Microphone</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header><h1>Desmos Microphone</h1></header>
 
-    <div class="inputContainer">
+    <div class="card-container">
       <h3>Input</h3>
+      <p class="section-description">Choose your audio source and configure options</p>
 
-      <div class="choice-container">
-        <p>Do you have access to Inspect Element on your browser?</p>
+      <div class="radio-group">
+        <label>Do you have access to Inspect Element on your browser?</label>
+        <div class="choice-container radio-options">
         <input type="radio" id="option1" name="choice" value="value1" />
         <label for="Yes">Yes</label>
 
         <input type="radio" id="option2" name="choice" value="value2" checked />
         <label for="No">No</label>
       </div>
+      </div>
+      
 
       <form id="audioForm">
         <input type="file" id="audioFile" accept="audio/*" required />
 
-        <p>Or...</p>
+        <p class="divider">Or...</p>
 
         <div id="recorder">
           <button id="recordBtn">Record with Microphone</button>
@@ -39,16 +44,18 @@
       </form>
     </div>
 
-    <div id="outputContainer" class="outputContainer" style="display: none">
+    <div id="outputContainer" class="card-container" style="display: none">
+      <h3>Output</h3>
 
       <p id="outputInstructions">
       </p>
 
-      <h3>Output</h3>
       <progress id="outputProgress" value="0" max="100"></progress>
 
-      <button id="copyBtn" style="display: block;">Copy Output</button>
+      <div id="outputControls" style="padding: 40px 0px 0px 0px;">
+        <button id="copyBtn" style="display: block;">Copy Output</button>
       <div id="output" class="output">It will come out here...</div>
+      </div>
     </div>
 
     <footer>Made by ThatGreenCrystal</footer>

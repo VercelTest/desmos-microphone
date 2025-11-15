@@ -58,6 +58,8 @@ async function processAudio() {
       setHTMLOutput(vol, freq, totalFrames)
       progressBar.value = 100;
 
+      document.getElementById("outputControls").style.display = "block";
+
     } else if (e.data.type === "ticker") {
       console.log(Math.ceil(e.data.tickerRate))
     }
@@ -128,11 +130,11 @@ function setHTMLOutput(voloutput, freqoutput, totalFrames) {
     const outputJSON = {"version":11,"graph":{"viewport":{"xmin":-10,"ymin":-10,"xmax":10,"ymax":10}},"expressions":{"list":[{"type":"folder","id":"134","title":"Logic & Playback","collapsed":true},{"type":"expression","id":"4","folderId":"134","color":"#c74440","latex":"\\operatorname{tone}\\left(F\\left(t\\right),\\ G\\left(t\\right)\\right)"},{"type":"expression","id":"3","folderId":"134","color":"#388c46","latex":"t=0","hidden":true,"slider":{"hardMin":true,"loopMode":"LOOP_FORWARD","min":"0","max":""+ (totalFrames +1),"step":"1"}},{"type":"text","id":"131","text":"Reset button (press the arrow)"},{"type":"expression","id":"14","color":"#c74440","latex":"R_{eset}=t\\to0"},{"type":"folder","id":"146","title":"Audio Data (DO NOT OPEN THIS WILL CRASH YOUR BROWSER)","hidden":true,"collapsed":true},{"type":"expression","id":"147","folderId":"146","color":"#2d70b3","latex":freqoutput,"hidden":true},{"type":"expression","id":"148","folderId":"146","color":"#388c46","latex":voloutput,"hidden":true}],"ticker":{"handlerLatex": "t\\to t+1\\left\\{t<" + (totalFrames +1) + "\\right\\}","minStepLatex":"18","open":true}}}
 
     rawText = `calculator = Calc || Desmos.instance || Object.values(Desmos)[0];\ncalculator.setState(${JSON.stringify(outputJSON)});`
-     document.getElementById("outputInstructions").innerHTML = "Instructions:<br />Open a new graph in Desmos<br />Open Inspect by Right clicking and selecting 'Inspect Element' or pressing Cmd/Ctrl + Shift + C<br />Paste the line below into console and close the Inspect";
+     document.getElementById("outputInstructions").innerHTML = `<h4>Instructions:</h4><br />Open a new graph in <a href="https://www.desmos.com/calculator/" target="_blank">Desmos</a><br />Open Inspect by Right clicking and selecting 'Inspect Element' or pressing Cmd/Ctrl + Shift + C<br />Paste the line below into console and close the Inspect`;
   } else {
     rawText = voloutput + "\n" + freqoutput;
 
-    document.getElementById("outputInstructions").innerHTML = 'Instructions:<br />Go to this link: <a href="https://www.desmos.com/calculator/fbtugwsq9q" target="_blank">Desmos Audio Player</a><br />Wait for the generator to load and then input the function into desmos. This will only play 5 seconds of your audio and is very limited quality due to the massive function size of the audio.';
+    document.getElementById("outputInstructions").innerHTML = '<h4>Instructions:</h4><br />Go to this link: <a href="https://www.desmos.com/calculator/fbtugwsq9q" target="_blank">Desmos Audio Player</a><br />Wait for the generator to load and then input the function into desmos. This will only play 5 seconds of your audio and is very limited quality due to the massive function size of the audio.';
   }
 
   outputDiv.dataset.raw = rawText;
@@ -177,7 +179,8 @@ document.getElementById("audioForm").addEventListener("submit", function (e) {
   processAudio();
 });
 
-// remove progress bar when new file loaded
+// hide output when new file loaded
 document.getElementById("audioFile").addEventListener('change', function () {
-  document.getElementById("outputProgress").value = 0;
+  document.getElementById("outputContainer").style.display = "none"
+  document.getElementById("outputControls").style.display = "none"
 });

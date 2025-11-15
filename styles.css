@@ -1,17 +1,220 @@
+/* styles.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, #3b7bbd 0%, #397737 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  color: #333;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+header h1 {
+  color: white;
+  font-size: 3rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+body > p:first-of-type {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.25rem;
+  text-align: center;
+  margin-bottom: 48px;
+  max-width: 600px;
+}
+
+/* Main card container */
+.card-container {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  margin-bottom: 32px;
+  
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.section-description {
+  color: #666;
+  margin-bottom: 32px;
+  font-size: 0.95rem;
+}
+
+/* Radio buttons */
+.radio-group {
+  margin-bottom: 32px;
+}
+
+.radio-group label {
+  display: block;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  font-size: 1rem;
+}
+
+.radio-options {
+  display: flex;
+  gap: 24px;
+}
+
+.radio-options input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.radio-options label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+/* Form styling */
+#audioForm {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-group label {
+  font-weight: 500;
+  color: #1a1a1a;
+  font-size: 1rem;
+}
+
+/* File input styling */
+input[type="file"] {
+  background: #3b7bbd;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+input[type="file"]:hover {
+  background: #2d5f94;
+}
+
+input[type="file"]::file-selector-button {
+  background-color: #275583;
+  padding: 16px 24px;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 6px 0 0 6px;
+  cursor: pointer;
+}
+
+/* Divider */
+.divider {
+  text-align: center;
+  color: #515151;
+  font-size: 0.95rem;
+}
+
+/* Buttons */
+button,
+input[type="submit"] {
+  padding: 16px 24px;
+  background: #3b7bbd;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+progress {
+  width: 100%;
+}
+
+
+button:hover,
+input[type="submit"]:hover, input[type="file"]:hover{
+  background: #2d5f94;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 123, 189, 0.3);
+}
+
+input[type="submit"] {
+  background: #3bbd51;
+}
+input[type="submit"]:hover {
+  background: #2f9e43;
+}
+
+button:active,
+input[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* Output section */
+h3 {
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+#copyBtn {
+  width: auto;
+  padding: 12px 24px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
 /* Container for the output */
 .output {
   background: black;
   color: white;
-  border-radius: 6px;
-  width: 50vw;
-  max-height: 80vh;
-  padding: 12px 8px;
+  border-radius: 12px;
+  width: 100%;
+  max-height: 400px;
+  padding: 16px;
   overflow-y: auto;
-  overflow-x: auto; 
+  overflow-x: auto;
   counter-reset: line;
   white-space: pre;
   text-align: left;
-  font-family: monospace;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 /* Each line */
@@ -19,7 +222,7 @@
   display: block;
   counter-increment: line;
   position: relative;
-  padding-left: 2em;
+  padding-left: 3em;
 }
 
 /* Line numbers */
@@ -27,16 +230,42 @@
   content: counter(line);
   position: absolute;
   left: 0;
-  color: grey;
+  color: #666;
   user-select: none;
+  width: 2.5em;
+  text-align: right;
+  padding-right: 0.5em;
 }
 
-.outputContainer {
-  padding: 20px;
-  border: 2px solid black;
+/* Footer */
+footer {
+  color: white;
+  text-align: center;
+  margin-top: 32px;
+  font-size: 0.95rem;
+  opacity: 0.9;
 }
 
-.inputContainer {
-  padding: 20px;
-  border: 2px solid black;
+/* Progress bar */
+progress {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #eaeaea;
+}
+
+progress::-webkit-progress-value {
+  background-color: #3bbd51;
+  border-radius: 12px;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #eaeaea;
+  border-radius: 12px;
+}
+/* Firefox */
+progress::-moz-progress-bar {
+  background-color: #3bbd51;
+  border-radius: 12px;
 }
