@@ -1,6 +1,6 @@
 importScripts('/javascript/fft.js');
 
-// THANK YOU QINGY1337 FOR FEQUENCY SORT
+// THANK YOU QINGY1337 FOR FREQUENCY SORTING
 
 // === QUALITY SETTINGS
 const FFT_SIZE = 2048;           // Increased for better frequency resolution
